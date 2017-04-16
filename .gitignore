@@ -9,7 +9,7 @@ _test
 bin
 src/*/data
 
-# IntelliJ Folders
+# Gogland Folders
 .idea
 
 # Architecture specific extensions/prefixes
