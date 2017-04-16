@@ -6,8 +6,8 @@
 # Folders
 _obj
 _test
-bin/
-*/data/
+bin
+src/*/data
 
 # Architecture specific extensions/prefixes
 *.[568vq]
