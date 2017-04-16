@@ -17,6 +17,7 @@ src/*/data
 # Package Folders
 src/golang.org
 src/gopkg.in
+src/github.com
 
 # Architecture specific extensions/prefixes
 *.[568vq]
