@@ -6,11 +6,17 @@
 # Folders
 _obj
 _test
+
+# Other Folders
 bin
 src/*/data
 
 # Gogland Folders
 .idea
+
+# Package Folders
+src/golang.org
+src/gopkg.in
 
 # Architecture specific extensions/prefixes
 *.[568vq]
