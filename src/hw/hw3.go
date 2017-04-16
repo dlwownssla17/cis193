@@ -37,7 +37,7 @@ func main() {
 	psPal[0] = &Person{-1, "John", "Smith"}
 	psPal[1] = &Person{-1, "Adam", "Smith"}
 	psPal[2] = &Person{-1, "John", "Smith"}
-	fmt.Println(IsPalindrome(psPal))
+	fmt.Println(IsPalindromeHW3(psPal))
 
 	fmt.Println(Fold([]int{1, 2, 4}, 0, add))
 	fmt.Println(Fold([]int{}, 42, mul))
@@ -126,7 +126,7 @@ func NewPerson(first, last string) *Person {
 	return p
 }
 
-// Problem 2: IsPalindrome Redux
+// Problem 2: IsPalindromeHW3 Redux
 // Using a function that simply requires sort.Interface, you should be able to
 // check if a sequence is a palindrome. You may use, adapt, or modify your code
 // from HW0. Note that the input does not need to be a string: any type which
@@ -134,9 +134,9 @@ func NewPerson(first, last string) *Person {
 // only functionality you should use should come from the sort.Interface methods
 // Ex: [1, 2, 1] => true
 
-// IsPalindrome checks if the string is a palindrome.
+// IsPalindromeHW3 checks if the string is a palindrome.
 // A palindrome is a string that reads the same backward as forward.
-func IsPalindrome(s sort.Interface) bool {
+func IsPalindromeHW3(s sort.Interface) bool {
 	for i := 0; i < s.Len()/2; i++ {
 		if s.Less(i, s.Len()-1-i) || s.Less(s.Len()-1-i, i) {
 			return false
