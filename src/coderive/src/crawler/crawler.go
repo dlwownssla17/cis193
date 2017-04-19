@@ -1,4 +1,4 @@
-package main
+package crawler
 
 import (
 	"fmt"
@@ -6,14 +6,6 @@ import (
 	"log"
 	"strings"
 )
-
-func main() {
-	//repo := GetRepository("dlwownssla17", "cis193")
-	repo := GetRepository("yakumioto", "CrawlerIShadowsocks")
-	fmt.Println(&repo)
-	fmt.Printf("Num Files: %d\n", repo.GetNumFiles())
-	fmt.Printf("Num Branches: %d\n", len(repo.Branches))
-}
 
 /* * */
 
@@ -45,6 +37,7 @@ func getFileWithParams(username, repositoryName, branchName, filePath, filename 
 
 	return &File{
 		Name: filename,
+		Link: GitHubUrlifyWithParams(username, repositoryName, branchName, filePath, true),
 		Data: doc.Find("body").Eq(0).Text(),
 	}
 }

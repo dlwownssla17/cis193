@@ -1,4 +1,4 @@
-package main
+package crawler
 
 import (
 	"fmt"
@@ -17,13 +17,14 @@ func addTabs(lines []string) []string {
 // File is a representation of a go source code file.
 type File struct {
 	Name string
+	Link string
 	Data string
 }
 
 func (f *File) String() string {
 	lines := strings.Split(f.Data, "\n")
 	dataString := strings.Join(addTabs(lines), "\n")
-	return fmt.Sprintf("File {\n\tName: %s\n\tData:\n\t\"\n%s\n\t\"\n}", f.Name, dataString)
+	return fmt.Sprintf("File {\n\tName: %s\n\tLink: %s\n\tData:\n\t\"\n%s\n\t\"\n}", f.Name, f.Link, dataString)
 }
 
 /* * */
