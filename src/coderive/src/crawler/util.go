@@ -1,3 +1,4 @@
 package main
 
-const GithubURL string = "https://github.com/"
+const GitHubURL string = "https://github.com"
+const GitHubRawContentURL string = "https://raw.githubusercontent.com"
