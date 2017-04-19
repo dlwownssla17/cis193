@@ -9,7 +9,7 @@ import (
 
 func main() {
 	repo := GetRepository("dlwownssla17", "cis193")
-	fmt.Printf("%v\n", repo)
+	fmt.Printf("%s\n", &repo)
 }
 
 func getBranchNames(username, repositoryName string) []string {
@@ -30,8 +30,8 @@ func getBranchNames(username, repositoryName string) []string {
 	return branchNames
 }
 
-func getFile(partURL, filename string) *File {
-	doc, err := goquery.NewDocument(GitHubRawContentUrlify(partURL))
+func getFileWithParams(username, repositoryName, branchName, filePath, filename string) *File {
+	doc, err := goquery.NewDocument(GitHubRawContentUrlifyWithParams(username, repositoryName, branchName, filePath))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -91,13 +91,13 @@ func getDirectory(username, repositoryName, branchName, filePath, directoryName 
 			log.Fatalf("GitHub User: %s\nRepository Name: %s\nBranch Name: %s\n File Path: %s\nHTML element for %s is missing a link unexpectedly.\n", username, repositoryName, branchName, filePath, childName)
 		}
 
+		extendedPath := appendPath(filePath, childName)
 		isFile := isLinkToFile(username, repositoryName, childLink)
 		if isFile && hasGoExtension(childName) {
-			childFile := getFile(childLink, childName)
+			childFile := getFileWithParams(username, repositoryName, branchName, extendedPath, childName)
 			files = append(files, childFile)
 		} else if !isFile {
-			subdirectoryPath := appendPath(filePath, childName)
-			childDirectory := getDirectory(username, repositoryName, branchName, subdirectoryPath, childName)
+			childDirectory := getDirectory(username, repositoryName, branchName, extendedPath, childName)
 			directories = append(directories, childDirectory)
 		}
 	}
