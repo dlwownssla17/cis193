@@ -35,10 +35,14 @@ func getFileWithParams(username, repositoryName, branchName, filePath, filename 
 		log.Fatal(err)
 	}
 
+	data := doc.Find("body").Eq(0).Text()
+	numLines := len(strings.Split(data, "\n"))
+
 	return &File{
 		Name: filename,
 		Link: GitHubUrlifyWithParams(username, repositoryName, branchName, filePath, true),
-		Data: doc.Find("body").Eq(0).Text(),
+		NumLines: numLines,
+		Data: data,
 	}
 }
 

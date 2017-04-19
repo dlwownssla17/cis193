@@ -18,13 +18,14 @@ func addTabs(lines []string) []string {
 type File struct {
 	Name string
 	Link string
+	NumLines int
 	Data string
 }
 
 func (f *File) String() string {
 	lines := strings.Split(f.Data, "\n")
 	dataString := strings.Join(addTabs(lines), "\n")
-	return fmt.Sprintf("File {\n\tName: %s\n\tLink: %s\n\tData:\n\t\"\n%s\n\t\"\n}", f.Name, f.Link, dataString)
+	return fmt.Sprintf("File {\n\tName: %s\n\tLink: %s\n\tNumLines: %d\n\tData:\n\t\"\n%s\n\t\"\n}", f.Name, f.Link, f.NumLines, dataString)
 }
 
 /* * */
