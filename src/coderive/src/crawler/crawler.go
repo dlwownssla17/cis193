@@ -8,9 +8,14 @@ import (
 )
 
 func main() {
-	repo := GetRepository("dlwownssla17", "cis193")
-	fmt.Printf("%s\n", &repo)
+	//repo := GetRepository("dlwownssla17", "cis193")
+	repo := GetRepository("yakumioto", "CrawlerIShadowsocks")
+	fmt.Println(&repo)
+	fmt.Printf("Num Files: %d\n", repo.GetNumFiles())
+	fmt.Printf("Num Branches: %d\n", len(repo.Branches))
 }
+
+/* * */
 
 func getBranchNames(username, repositoryName string) []string {
 	doc, err := goquery.NewDocument(GitHubRepositoryUrlifyWithParams(username, repositoryName))
@@ -30,6 +35,8 @@ func getBranchNames(username, repositoryName string) []string {
 	return branchNames
 }
 
+/* * */
+
 func getFileWithParams(username, repositoryName, branchName, filePath, filename string) *File {
 	doc, err := goquery.NewDocument(GitHubRawContentUrlifyWithParams(username, repositoryName, branchName, filePath))
 	if err != nil {
@@ -41,6 +48,8 @@ func getFileWithParams(username, repositoryName, branchName, filePath, filename 
 		Data: doc.Find("body").Eq(0).Text(),
 	}
 }
+
+/* * */
 
 func isLinkToFile(username, repositoryName, partURL string) bool {
 	if len(username) == 0 || len(repositoryName) == 0 {
@@ -109,12 +118,16 @@ func getDirectory(username, repositoryName, branchName, filePath, directoryName 
 	}
 }
 
+/* * */
+
 func getBranch(username, repositoryName, branchName string) *Branch {
 	return &Branch{
 		Name: branchName,
 		Root: getDirectory(username, repositoryName, branchName, "", ""),
 	}
 }
+
+/* * */
 
 // GetRepository crawls through the specified repository and builds the corresponding Repository instance
 func GetRepository(username, repositoryName string) Repository {
