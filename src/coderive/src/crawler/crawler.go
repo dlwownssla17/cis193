@@ -144,7 +144,8 @@ func GetRepository(username, repositoryName string) Repository {
 }
 
 // CrawlRepository crawls the specified repository and saves it in the repository collection.
-func CrawlRepository(username, repositoryName string) {
+func CrawlRepository(username, repositoryName string) Repository {
 	repo := GetRepository(username, repositoryName)
 	SaveRepository(repo)
+	return repo
 }

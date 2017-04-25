@@ -10,8 +10,12 @@ type Dummy struct {
 	Dummy bool
 }
 
+func getDatabase(session *mgo.Session) *mgo.Database {
+	return session.DB("coderive")
+}
+
 func getCollRepository(session *mgo.Session) *mgo.Collection {
-	return session.DB("coderive").C("repository")
+	return getDatabase(session).C("repository")
 }
 
 func getDummy() Dummy {
@@ -38,6 +42,22 @@ func DBRepositoryInit() {
 	}
 
 	err = collRepository.Remove(bson.M{"dummy": true})
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// DBRepositoryDrop drops the entire coderive database.
+func DBDrop() {
+	session, err := mgo.Dial("mongodb://localhost")
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	db := getDatabase(session)
+
+	err = db.DropDatabase()
 	if err != nil {
 		log.Fatal(err)
 	}
