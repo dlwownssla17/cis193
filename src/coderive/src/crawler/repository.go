@@ -6,7 +6,7 @@ import (
 )
 
 func addTabs(lines []string) []string {
-	for idx, line := range(lines) {
+	for idx, line := range lines {
 		lines[idx] = fmt.Sprintf("\t\t%s", line)
 	}
 	return lines
@@ -25,7 +25,15 @@ type File struct {
 func (f *File) String() string {
 	lines := strings.Split(f.Data, "\n")
 	dataString := strings.Join(addTabs(lines), "\n")
-	return fmt.Sprintf("File {\n\tName: %s\n\tLink: %s\n\tNumLines: %d\n\tData:\n\t\"\n%s\n\t\"\n}", f.Name, f.Link, f.NumLines, dataString)
+	return fmt.Sprintf("File {\n" +
+		"\tName: %s\n" +
+		"\tLink: %s\n" +
+		"\tNumLines: %d\n" +
+		"\tData:\n" +
+		"\t\"\n" +
+		"%s\n" +
+		"\t\"\n" +
+		"}", f.Name, f.Link, f.NumLines, dataString)
 }
 
 /* * */
@@ -39,7 +47,7 @@ type Directory struct {
 
 func (dir *Directory) GetNumFiles() int {
 	sum := 0
-	for _, subdirectory := range(dir.Subdirectories) {
+	for _, subdirectory := range dir.Subdirectories {
 		sum += subdirectory.GetNumFiles()
 	}
 	return len(dir.Files) + sum
@@ -47,7 +55,7 @@ func (dir *Directory) GetNumFiles() int {
 
 func (dir *Directory) String() string {
 	fileStrings := make([]string, 0)
-	for _, file := range(dir.Files) {
+	for _, file := range dir.Files {
 		fileString := file.String()
 		lines := strings.Split(fileString, "\n")
 		fileStrings = append(fileStrings, strings.Join(addTabs(lines), "\n"))
@@ -55,14 +63,20 @@ func (dir *Directory) String() string {
 	filesString := strings.Join(fileStrings, ",\n")
 
 	subdirectoryStrings := make([]string, 0)
-	for _, subdirectory := range(dir.Subdirectories) {
+	for _, subdirectory := range dir.Subdirectories {
 		subdirectoryString := subdirectory.String()
 		lines := strings.Split(subdirectoryString, "\n")
 		subdirectoryStrings = append(subdirectoryStrings, strings.Join(addTabs(lines), "\n"))
 	}
 	subdirectoriesString := strings.Join(subdirectoryStrings, ",\n")
 
-	return fmt.Sprintf("Directory {\n\tName: %s\n\tFiles:\n%s\n\tSubdirectories:\n%s\n}", dir.Name, filesString, subdirectoriesString)
+	return fmt.Sprintf("Directory {\n" +
+		"\tName: %s\n" +
+		"\tFiles:\n" +
+		"%s\n" +
+		"\tSubdirectories:\n" +
+		"%s\n" +
+		"}", dir.Name, filesString, subdirectoriesString)
 }
 
 /* * */
@@ -82,7 +96,11 @@ func (br *Branch) String() string {
 	lines := strings.Split(rootString, "\n")
 	rootString = strings.Join(addTabs(lines), "\n")
 
-	return fmt.Sprintf("Branch {\n\tName: %s\n\tRoot:\n%s\n}", br.Name, rootString)
+	return fmt.Sprintf("Branch {\n" +
+		"\tName: %s\n" +
+		"\tRoot:\n" +
+		"%s\n" +
+		"}", br.Name, rootString)
 }
 
 /* * */
@@ -97,7 +115,7 @@ type Repository struct {
 
 func (repo *Repository) GetNumFiles() int {
 	sum := 0
-	for _, branch := range(repo.Branches) {
+	for _, branch := range repo.Branches {
 		sum += branch.GetNumFiles()
 	}
 	return sum
@@ -105,12 +123,18 @@ func (repo *Repository) GetNumFiles() int {
 
 func (repo *Repository) String() string {
 	branchStrings := make([]string, 0)
-	for _, branch := range(repo.Branches) {
+	for _, branch := range repo.Branches {
 		branchString := branch.String()
 		lines := strings.Split(branchString, "\n")
 		branchStrings = append(branchStrings, strings.Join(addTabs(lines), "\n"))
 	}
 	branchesString := strings.Join(branchStrings, ",\n")
 
-	return fmt.Sprintf("Repository {\n\tUsername: %s\n\tName: %s\n\tBranches:\n%s\n\tProcessed: %v\n}", repo.Username, repo.Name, branchesString, repo.Processed)
+	return fmt.Sprintf("Repository {\n" +
+		"\tUsername: %s\n" +
+		"\tName: %s\n" +
+		"\tBranches:\n" +
+		"%s\n" +
+		"\tProcessed: %v\n" +
+		"}", repo.Username, repo.Name, branchesString, repo.Processed)
 }
