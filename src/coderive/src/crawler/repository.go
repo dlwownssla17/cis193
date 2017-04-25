@@ -92,6 +92,7 @@ type Repository struct {
 	Username string
 	Name string
 	Branches []*Branch
+	Processed bool
 }
 
 func (repo *Repository) GetNumFiles() int {
@@ -111,5 +112,5 @@ func (repo *Repository) String() string {
 	}
 	branchesString := strings.Join(branchStrings, ",\n")
 
-	return fmt.Sprintf("Repository {\n\tUsername: %s\n\tName: %s\n\tBranches:\n%s\n}", repo.Username, repo.Name, branchesString)
+	return fmt.Sprintf("Repository {\n\tUsername: %s\n\tName: %s\n\tBranches:\n%s\n\tProcessed: %v\n}", repo.Username, repo.Name, branchesString, repo.Processed)
 }

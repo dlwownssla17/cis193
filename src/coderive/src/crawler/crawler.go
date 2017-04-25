@@ -126,7 +126,7 @@ func getBranch(username, repositoryName, branchName string) *Branch {
 
 /* * */
 
-// GetRepository crawls through the specified repository and builds the corresponding Repository instance
+// GetRepository finds the specified repository and builds the corresponding Repository instance.
 func GetRepository(username, repositoryName string) Repository {
 	branchNames := getBranchNames(username, repositoryName)
 
@@ -139,5 +139,12 @@ func GetRepository(username, repositoryName string) Repository {
 		Username: username,
 		Name: repositoryName,
 		Branches: branches,
+		Processed: false,
 	}
+}
+
+// CrawlRepository crawls the specified repository and saves it in the repository collection.
+func CrawlRepository(username, repositoryName string) {
+	repo := GetRepository(username, repositoryName)
+	SaveRepository(repo)
 }
