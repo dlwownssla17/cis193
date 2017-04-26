@@ -17,7 +17,7 @@ func ExistsRepository(username, repositoryName string) bool {
 
 	collRepositories := common.GetCollection(session, "repositories")
 
-	count, err := collRepositories.Find(bson.M{"username": username, "repositoryname": repositoryName}).Count()
+	count, err := collRepositories.Find(bson.M{"username": username, "name": repositoryName}).Count()
 	if err != nil {
 		panic(err)
 	}

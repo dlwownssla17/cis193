@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"coderive/src/indexer"
 	"coderive/src/common"
+	"sync"
 )
 
 func usage() {
@@ -16,11 +17,31 @@ func usage() {
 	fmt.Println("---OR---")
 	fmt.Println("server")
 	fmt.Println("---OR---")
-	fmt.Println("init repositories")
-	fmt.Println("---OR---")
-	fmt.Println("init queries.textsearch")
+	fmt.Println("init [repositories|queries.textsearch|queries.textwordmatch|queries.semvartype]?")
 	fmt.Println("---OR---")
 	fmt.Println("drop")
+}
+
+func crawlAll(args []string) {
+	var wg sync.WaitGroup
+
+	for i := 1; i < len(args); i += 2 {
+		wg.Add(1)
+
+		go func(username, repositoryName string) {
+			defer wg.Done()
+
+			repo := crawler.CrawlRepository(username, repositoryName)
+
+			if repo != nil {
+				fmt.Printf("Done crawling repository: %s %s\n", username, repositoryName)
+			} else {
+				fmt.Printf("Repository already exists: %s %s\n", username, repositoryName)
+			}
+		}(args[i], args[i+1])
+	}
+
+	wg.Wait()
 }
 
 func main() {
@@ -29,17 +50,9 @@ func main() {
 	if len(args) >= 3 && len(args) % 2 == 1 && args[0] == "crawl" {
 		fmt.Println("Started crawling specified repositories")
 
-		for i := 0; i < len(args) - 1; i += 2 {
-			go func(username, repositoryName string) {
-				repo := crawler.CrawlRepository(username, repositoryName)
+		crawlAll(args)
 
-				if &repo != nil {
-					fmt.Printf("Finished crawling repository: %s\n", repositoryName)
-				} else {
-					fmt.Printf("Repository already exists: %s\n", repositoryName)
-				}
-			}(args[i], args[i+1])
-		}
+		fmt.Println("Finished crawling specified repositories")
 		return
 	} else if len(args) == 2 && args[0] == "init" &&
 		(args[1] == "repositories" || args[1] == "queries.textsearch") {
@@ -59,6 +72,16 @@ func main() {
 			return
 		} else if args[0] == "server" {
 
+			return
+		} else if args[0] == "init" {
+			fmt.Println("Started initializing all dbs")
+
+			dbs := []string{"repositories", "queries.textsearch"}
+			for _, db := range dbs {
+				common.DBCollectionInit(db)
+			}
+
+			fmt.Println("Finished initializing all dbs")
 			return
 		} else if args[0] == "drop" {
 			fmt.Println("Started dropping entire database")
