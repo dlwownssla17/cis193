@@ -8,7 +8,7 @@ import (
 	"coderive/src/common"
 )
 
-// SaveQueryTextSearch stores into the query text search collection the given query text search.
+// SaveQueryTextSearch stores into the query text search collection the given query.
 func SaveQueryTextSearch(q *QueryTextSearch) {
 	session, err := mgo.Dial("mongodb://localhost")
 	if err != nil {
@@ -23,6 +23,44 @@ func SaveQueryTextSearch(q *QueryTextSearch) {
 		log.Fatal(err)
 	}
 }
+
+/* * */
+
+// SaveQueryTextWordMatch stores into the query text word match collection the given query.
+func SaveQueryTextWordMatch(q *QueryTextWordMatch) {
+	session, err := mgo.Dial("mongodb://localhost")
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	collQueriesTextWordMatch := common.GetCollection(session, "queries.textwordmatch")
+
+	err = collQueriesTextWordMatch.Insert(q)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+/* * */
+
+// SaveQuerySemVarType stores into the query sem var type collection the given query.
+func SaveQuerySemVarType(q *QuerySemVarType) {
+	session, err := mgo.Dial("mongodb://localhost")
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	collQueriesSemVarType := common.GetCollection(session, "queries.semvartype")
+
+	err = collQueriesSemVarType.Insert(q)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+/* * */
 
 // GetAllRepositoriesToProcess gets all the repositories to process for indexing.
 func GetAllRepositoriesToProcess() []crawler.Repository {

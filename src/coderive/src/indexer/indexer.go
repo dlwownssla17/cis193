@@ -3,6 +3,7 @@ package indexer
 import (
 	"coderive/src/crawler"
 	"fmt"
+	"sync"
 )
 
 func buildQueriesThroughDirectory(qs []*QueryTextSearch, dir *crawler.Directory,
@@ -40,16 +41,40 @@ func toQueriesTextSearch(repo crawler.Repository) []*QueryTextSearch {
 	return qs
 }
 
+/* * */
+
 // IndexAll processes all the crawled documents in the repositories collection to update all the queries collections.
 func IndexAll() int {
+	var wg sync.WaitGroup
+
 	reposToProcess := GetAllRepositoriesToProcess()
 
 	for _, repo := range reposToProcess {
-		qs := toQueriesTextSearch(repo)
-		for _, q := range qs {
-			SaveQueryTextSearch(q)
-		}
+		wg.Add(3)
+
+		go func(repo crawler.Repository) {
+			defer wg.Done()
+
+			qs := toQueriesTextSearch(repo)
+			for _, q := range qs {
+				SaveQueryTextSearch(q)
+			}
+		}(repo)
+
+		go func(repo crawler.Repository) {
+			defer wg.Done()
+
+
+		}(repo)
+
+		go func(repo crawler.Repository) {
+			defer wg.Done()
+
+
+		}(repo)
 	}
+
+	wg.Wait()
 
 	UpdateAllRepositoriesProcessed()
 
