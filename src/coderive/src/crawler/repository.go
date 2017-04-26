@@ -3,16 +3,8 @@ package crawler
 import (
 	"fmt"
 	"strings"
+	"coderive/src/common"
 )
-
-func addTabs(lines []string) []string {
-	for idx, line := range lines {
-		lines[idx] = fmt.Sprintf("\t\t%s", line)
-	}
-	return lines
-}
-
-/* * */
 
 // File is a representation of a go source code file.
 type File struct {
@@ -24,7 +16,7 @@ type File struct {
 
 func (f *File) String() string {
 	lines := strings.Split(f.Data, "\n")
-	dataString := strings.Join(addTabs(lines), "\n")
+	dataString := strings.Join(common.AddTabs(lines), "\n")
 	return fmt.Sprintf("File {\n" +
 		"\tName: %s\n" +
 		"\tLink: %s\n" +
@@ -45,6 +37,7 @@ type Directory struct {
 	Subdirectories []*Directory
 }
 
+// GetNumFiles computes the total number of source code files under this directory.
 func (dir *Directory) GetNumFiles() int {
 	sum := 0
 	for _, subdirectory := range dir.Subdirectories {
@@ -58,7 +51,7 @@ func (dir *Directory) String() string {
 	for _, file := range dir.Files {
 		fileString := file.String()
 		lines := strings.Split(fileString, "\n")
-		fileStrings = append(fileStrings, strings.Join(addTabs(lines), "\n"))
+		fileStrings = append(fileStrings, strings.Join(common.AddTabs(lines), "\n"))
 	}
 	filesString := strings.Join(fileStrings, ",\n")
 
@@ -66,7 +59,7 @@ func (dir *Directory) String() string {
 	for _, subdirectory := range dir.Subdirectories {
 		subdirectoryString := subdirectory.String()
 		lines := strings.Split(subdirectoryString, "\n")
-		subdirectoryStrings = append(subdirectoryStrings, strings.Join(addTabs(lines), "\n"))
+		subdirectoryStrings = append(subdirectoryStrings, strings.Join(common.AddTabs(lines), "\n"))
 	}
 	subdirectoriesString := strings.Join(subdirectoryStrings, ",\n")
 
@@ -87,6 +80,7 @@ type Branch struct {
 	Root *Directory
 }
 
+// GetNumFiles computes total number of source code files in this branch.
 func (br *Branch) GetNumFiles() int {
 	return br.Root.GetNumFiles()
 }
@@ -94,7 +88,7 @@ func (br *Branch) GetNumFiles() int {
 func (br *Branch) String() string {
 	rootString := br.Root.String()
 	lines := strings.Split(rootString, "\n")
-	rootString = strings.Join(addTabs(lines), "\n")
+	rootString = strings.Join(common.AddTabs(lines), "\n")
 
 	return fmt.Sprintf("Branch {\n" +
 		"\tName: %s\n" +
@@ -113,6 +107,7 @@ type Repository struct {
 	Processed bool
 }
 
+// GetNumFiles computes total number of source code files in this repository.
 func (repo *Repository) GetNumFiles() int {
 	sum := 0
 	for _, branch := range repo.Branches {
@@ -126,7 +121,7 @@ func (repo *Repository) String() string {
 	for _, branch := range repo.Branches {
 		branchString := branch.String()
 		lines := strings.Split(branchString, "\n")
-		branchStrings = append(branchStrings, strings.Join(addTabs(lines), "\n"))
+		branchStrings = append(branchStrings, strings.Join(common.AddTabs(lines), "\n"))
 	}
 	branchesString := strings.Join(branchStrings, ",\n")
 

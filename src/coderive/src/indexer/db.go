@@ -5,49 +5,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"coderive/src/crawler"
 	"log"
+	"coderive/src/common"
 )
-
-type Dummy struct {
-	Dummy bool
-}
-
-func getDummy() Dummy {
-	return Dummy{
-		Dummy: true,
-	}
-}
-
-func getDatabase(session *mgo.Session) *mgo.Database {
-	return session.DB("coderive")
-}
-
-// GetCollQueriesTextSearch gets the query text search collection.
-func GetCollQueriesTextSearch(session *mgo.Session) *mgo.Collection {
-	return getDatabase(session).C("queries.textsearch")
-}
-
-// DBQueriesTextSearchInit initializes the query text search collection.
-func DBQueriesTextSearchInit() {
-	session, err := mgo.Dial("mongodb://localhost")
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
-	collQueriesTextSearch := GetCollQueriesTextSearch(session)
-
-	dummy := getDummy()
-
-	err = collQueriesTextSearch.Insert(&dummy)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = collQueriesTextSearch.Remove(bson.M{"dummy": true})
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 // SaveQueryTextSearch stores into the query text search collection the given query text search.
 func SaveQueryTextSearch(q QueryTextSearch) {
@@ -57,7 +16,7 @@ func SaveQueryTextSearch(q QueryTextSearch) {
 	}
 	defer session.Close()
 
-	collQueriesTextSearch := GetCollQueriesTextSearch(session)
+	collQueriesTextSearch := common.GetCollection(session, "queries.textsearch")
 
 	err = collQueriesTextSearch.Insert(&q)
 	if err != nil {
@@ -73,7 +32,7 @@ func GetAllRepositoriesToProcess() []crawler.Repository {
 	}
 	defer session.Close()
 
-	collRepositories := crawler.GetCollRepositories(session)
+	collRepositories := common.GetCollection(session, "repositories")
 
 	var results []crawler.Repository
 	err = collRepositories.Find(bson.M{"processed": false}).All(&results)
@@ -93,7 +52,7 @@ func UpdateAllRepositoriesProcessed() {
 	}
 	defer session.Close()
 
-	collRepositories := crawler.GetCollRepositories(session)
+	collRepositories := common.GetCollection(session, "repositories")
 
 	_, err = collRepositories.UpdateAll(bson.M{"processed": false}, bson.M{"$set": bson.M{"processed": true}})
 	if err != nil {

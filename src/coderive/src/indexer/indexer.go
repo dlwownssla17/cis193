@@ -41,7 +41,7 @@ func toQueriesTextSearch(repo crawler.Repository) []QueryTextSearch {
 }
 
 // IndexAll processes all the crawled documents in the repositories collection to update all the queries collections.
-func IndexAll() {
+func IndexAll() int {
 	reposToProcess := GetAllRepositoriesToProcess()
 
 	for _, repo := range reposToProcess {
@@ -52,4 +52,6 @@ func IndexAll() {
 	}
 
 	UpdateAllRepositoriesProcessed()
+
+	return len(reposToProcess)
 }
