@@ -9,7 +9,7 @@ import (
 )
 
 // SaveQueryTextSearch stores into the query text search collection the given query text search.
-func SaveQueryTextSearch(q QueryTextSearch) {
+func SaveQueryTextSearch(q *QueryTextSearch) {
 	session, err := mgo.Dial("mongodb://localhost")
 	if err != nil {
 		panic(err)
@@ -18,7 +18,7 @@ func SaveQueryTextSearch(q QueryTextSearch) {
 
 	collQueriesTextSearch := common.GetCollection(session, "queries.textsearch")
 
-	err = collQueriesTextSearch.Insert(&q)
+	err = collQueriesTextSearch.Insert(q)
 	if err != nil {
 		log.Fatal(err)
 	}

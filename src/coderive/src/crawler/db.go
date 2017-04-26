@@ -25,7 +25,7 @@ func ExistsRepository(username, repositoryName string) bool {
 }
 
 // SaveRepository stores into the repository collection the given crawled repository.
-func SaveRepository(repo Repository) {
+func SaveRepository(repo *Repository) {
 	session, err := mgo.Dial("mongodb://localhost")
 	if err != nil {
 		panic(err)
@@ -34,7 +34,7 @@ func SaveRepository(repo Repository) {
 
 	collRepositories := common.GetCollection(session, "repositories")
 
-	err = collRepositories.Insert(&repo)
+	err = collRepositories.Insert(repo)
 	if err != nil {
 		log.Fatal(err)
 	}

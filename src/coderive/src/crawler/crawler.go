@@ -127,7 +127,7 @@ func getBranch(username, repositoryName, branchName string) *Branch {
 /* * */
 
 // GetRepository finds the specified repository and builds the corresponding Repository instance.
-func GetRepository(username, repositoryName string) Repository {
+func GetRepository(username, repositoryName string) *Repository {
 	if ExistsRepository(username, repositoryName) {
 		return nil
 	}
@@ -139,7 +139,7 @@ func GetRepository(username, repositoryName string) Repository {
 		branches = append(branches, getBranch(username, repositoryName, branchNames[i]))
 	}
 
-	return Repository{
+	return &Repository{
 		Username: username,
 		Name: repositoryName,
 		Branches: branches,
@@ -148,9 +148,9 @@ func GetRepository(username, repositoryName string) Repository {
 }
 
 // CrawlRepository crawls the specified repository and saves it in the repository collection.
-func CrawlRepository(username, repositoryName string) Repository {
+func CrawlRepository(username, repositoryName string) *Repository {
 	repo := GetRepository(username, repositoryName)
-	if &repo != nil {
+	if repo != nil {
 		SaveRepository(repo)
 	}
 	return repo

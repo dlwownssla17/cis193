@@ -12,8 +12,8 @@ type Dummy struct {
 }
 
 // GetDummy gets a dummy for initializing a database.
-func GetDummy() Dummy {
-	return Dummy{
+func GetDummy() *Dummy {
+	return &Dummy{
 		Dummy: true,
 	}
 }
@@ -40,7 +40,7 @@ func DBCollectionInit(collectionName string) {
 
 	dummy := GetDummy()
 
-	err = collRepositories.Insert(&dummy)
+	err = collRepositories.Insert(dummy)
 	if err != nil {
 		log.Fatal(err)
 	}

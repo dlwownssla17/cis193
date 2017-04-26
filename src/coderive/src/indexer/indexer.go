@@ -5,10 +5,10 @@ import (
 	"fmt"
 )
 
-func buildQueriesThroughDirectory(qs []QueryTextSearch, dir *crawler.Directory,
-	username, repositoryName, branchName, currentFilePath string) []QueryTextSearch {
+func buildQueriesThroughDirectory(qs []*QueryTextSearch, dir *crawler.Directory,
+	username, repositoryName, branchName, currentFilePath string) []*QueryTextSearch {
 	for _, file := range dir.Files {
-		fileInfo := FileInfo{
+		fileInfo := &FileInfo{
 			Username: username,
 			RepositoryName: repositoryName,
 			BranchName: branchName,
@@ -18,8 +18,8 @@ func buildQueriesThroughDirectory(qs []QueryTextSearch, dir *crawler.Directory,
 			NumLines: file.NumLines,
 			Data: file.Data,
 		}
-		q := QueryTextSearch{
-			FileInfo: &fileInfo,
+		q := &QueryTextSearch{
+			FileInfo: fileInfo,
 		}
 		qs = append(qs, q)
 	}
@@ -32,8 +32,8 @@ func buildQueriesThroughDirectory(qs []QueryTextSearch, dir *crawler.Directory,
 	return qs
 }
 
-func toQueriesTextSearch(repo crawler.Repository) []QueryTextSearch {
-	qs := make([]QueryTextSearch, 0)
+func toQueriesTextSearch(repo crawler.Repository) []*QueryTextSearch {
+	qs := make([]*QueryTextSearch, 0)
 	for _, branch := range repo.Branches {
 		qs = buildQueriesThroughDirectory(qs, branch.Root, repo.Username, repo.Name, branch.Name, "/")
 	}
