@@ -18,6 +18,12 @@ type FileInfo struct {
 	Data string
 }
 
+// Matches represents the match of the file for some query.
+type Match struct {
+	MatchLines []int
+	FileInfo *FileInfo
+}
+
 func (fileInfo *FileInfo) String() string {
 	lines := strings.Split(fileInfo.Data, "\n")
 	dataString := strings.Join(common.AddTabs(lines), "\n")
@@ -59,17 +65,14 @@ func (q *QueryTextSearch) String() string {
 
 // QueryTextSearch represents query by conventional text search via efficient inverted indexing.
 type QueryTextWordMatch struct {
-	Count int
+	Count    int
 	Keywords []string
-	MatchFiles []*struct {
-		MatchLines []int
-		FileInfo *FileInfo
-	}
+	Matches  []*Match
 }
 
 func (q *QueryTextWordMatch) String() string {
 	matchFileStrings := make([]string, 0)
-	for _, matchFile := range q.MatchFiles {
+	for _, matchFile := range q.Matches {
 		fileInfoString := matchFile.FileInfo.String()
 		lines := strings.Split(fileInfoString, "\n")
 		fileInfoString = strings.Join(common.AddTabs(lines), "\n")
@@ -94,17 +97,14 @@ func (q *QueryTextWordMatch) String() string {
 
 // QuerySemVarType represents query by semantics variable type and globality.
 type QuerySemVarType struct {
-	Type string
-	Global bool
-	MatchFiles []*struct {
-		MatchLines []int
-		FileInfo *FileInfo
-	}
+	Type    string
+	Global  bool
+	Matches []*Match
 }
 
 func (q *QuerySemVarType) String() string {
 	matchFileStrings := make([]string, 0)
-	for _, matchFile := range q.MatchFiles {
+	for _, matchFile := range q.Matches {
 		fileInfoString := matchFile.FileInfo.String()
 		lines := strings.Split(fileInfoString, "\n")
 		fileInfoString = strings.Join(common.AddTabs(lines), "\n")

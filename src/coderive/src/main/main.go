@@ -7,6 +7,7 @@ import (
 	"coderive/src/indexer"
 	"coderive/src/common"
 	"sync"
+	"coderive/src/server"
 )
 
 func usage() {
@@ -71,7 +72,11 @@ func main() {
 			fmt.Printf("Finished indexing: %d repositories processed\n", count)
 			return
 		} else if args[0] == "server" {
+			fmt.Println("Started server")
 
+			server.RunServer()
+
+			fmt.Println("Finished server") // will not get here with Cmd+C
 			return
 		} else if args[0] == "init" {
 			fmt.Println("Started initializing all dbs")
