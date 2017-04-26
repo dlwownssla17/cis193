@@ -2,20 +2,12 @@ package crawler
 
 import (
 	"gopkg.in/mgo.v2"
-	"log"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 )
 
 type Dummy struct {
 	Dummy bool
-}
-
-func getDatabase(session *mgo.Session) *mgo.Database {
-	return session.DB("coderive")
-}
-
-func getCollRepository(session *mgo.Session) *mgo.Collection {
-	return getDatabase(session).C("repository")
 }
 
 func getDummy() Dummy {
@@ -24,24 +16,33 @@ func getDummy() Dummy {
 	}
 }
 
-// DBRepositoryInit initializes the repository collection.
-func DBRepositoryInit() {
+func getDatabase(session *mgo.Session) *mgo.Database {
+	return session.DB("coderive")
+}
+
+// GetCollRepositories gets the repository collection.
+func GetCollRepositories(session *mgo.Session) *mgo.Collection {
+	return getDatabase(session).C("repositories")
+}
+
+// DBRepositoriesInit initializes the repository collection.
+func DBRepositoriesInit() {
 	session, err := mgo.Dial("mongodb://localhost")
 	if err != nil {
 		panic(err)
 	}
 	defer session.Close()
 
-	collRepository := getCollRepository(session)
+	collRepositories := GetCollRepositories(session)
 
 	dummy := getDummy()
 
-	err = collRepository.Insert(&dummy)
+	err = collRepositories.Insert(&dummy)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = collRepository.Remove(bson.M{"dummy": true})
+	err = collRepositories.Remove(bson.M{"dummy": true})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,9 +72,9 @@ func SaveRepository(repo Repository) {
 	}
 	defer session.Close()
 
-	collRepository := getCollRepository(session)
+	collRepositories := GetCollRepositories(session)
 
-	err = collRepository.Insert(&repo)
+	err = collRepositories.Insert(&repo)
 	if err != nil {
 		log.Fatal(err)
 	}
