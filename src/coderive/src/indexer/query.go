@@ -18,12 +18,6 @@ type FileInfo struct {
 	Data string
 }
 
-// Matches represents the match of the file for some query.
-type Match struct {
-	MatchLines []int
-	FileInfo *FileInfo
-}
-
 func (fileInfo *FileInfo) String() string {
 	lines := strings.Split(fileInfo.Data, "\n")
 	dataString := strings.Join(common.AddTabs(lines), "\n")

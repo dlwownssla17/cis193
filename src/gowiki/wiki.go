@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"fmt"
 )
 
 type Page struct {
@@ -30,13 +31,17 @@ func loadPage(title string) (*Page, error) {
 	return &Page{Title: title, Body: body}, nil
 }
 
+//func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
+//	p, err := loadPage(title)
+//	if err != nil {
+//		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
+//		return
+//	}
+//	renderTemplate(w, "view", p)
+//}
+
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
-	p, err := loadPage(title)
-	if err != nil {
-		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
-		return
-	}
-	renderTemplate(w, "view", p)
+	renderTemplate(w, "client", nil)
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request, title string) {
@@ -58,7 +63,15 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
 
-var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
+func process(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	fmt.Fprintln(w, r.Method)
+	fmt.Fprintln(w, r.Form)
+	//fmt.Fprintln(w, r.PostForm)
+	//fmt.Fprintln(w, r.PostFormValue("hello"))
+}
+
+var templates = template.Must(template.ParseFiles("edit.html", "view.html", "client.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", p)
@@ -81,9 +94,17 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 }
 
 func main() {
-	http.HandleFunc("/view/", makeHandler(viewHandler))
-	http.HandleFunc("/edit/", makeHandler(editHandler))
-	http.HandleFunc("/save/", makeHandler(saveHandler))
+	//http.HandleFunc("/view/", makeHandler(viewHandler))
+	//http.HandleFunc("/edit/", makeHandler(editHandler))
+	//http.HandleFunc("/save/", makeHandler(saveHandler))
+	//
+	//http.HandleFunc("/process/", process)
+	//
+	//http.ListenAndServe(":8080", nil)
 
-	http.ListenAndServe(":8080", nil)
+	server := http.Server{
+		Addr: "127.0.0.1:8080",
+	}
+	http.HandleFunc("/process", process)
+	server.ListenAndServe()
 }
