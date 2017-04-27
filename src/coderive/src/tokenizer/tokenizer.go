@@ -20,8 +20,8 @@ var linesKeys = map[string]bool{
 	"eq": false,
 	"lt": false,
 	"gt": false,
-	"le": false,
-	"ge": false,
+	"lte": false,
+	"gte": false,
 	"ne": false,
 }
 

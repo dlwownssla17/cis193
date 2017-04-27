@@ -7,14 +7,31 @@ import (
 	"runtime"
 	"path"
 	"time"
+	"fmt"
 )
 
 // Result represents the search result following a query.
 type Result struct {
 	Query string
+	Valid bool
 	Matches []*indexer.Match
-	StartTime time.Time
-	EndTime time.Time
+	StartTime *time.Time
+	EndTime *time.Time
+}
+
+// SecondsElapsed computes the seconds elapsed to search the results.
+func (res *Result) SecondsElapsed() float64 {
+	if res.StartTime == nil || res.EndTime == nil {
+		return -1
+	}
+
+	diff := res.EndTime.Sub(*res.StartTime)
+	return diff.Seconds()
+}
+
+// SecondsElapsedString returns the string of SecondsElapsed.
+func (res *Result) SecondsElapsedString() string {
+	return fmt.Sprintf("%.6f", res.SecondsElapsed())
 }
 
 /* * */
@@ -44,17 +61,26 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	qText := r.Form.Get("q")
 	if r.Form.Get("q") == "" {
 		redirectHome(w, r)
 		return
 	}
 
+	startTime := time.Now()
 	res := &Result{
-		Query: r.Form.Get("q"),
-		StartTime: time.Now(),
+		Query: qText,
+		Valid: false,
+		StartTime: &startTime,
 	}
 
-
+	matches := indexer.FindMatches(qText)
+	if matches != nil {
+		res.Valid = true
+		res.Matches = matches
+	}
+	endTime := time.Now()
+	res.EndTime = &endTime
 
 	if r.Method == "GET" {
 		renderTemplate(w, "search", res)
@@ -67,9 +93,9 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 
 func helpHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		renderTemplate(w, "help", nil)
-	} else if r.Method == "POST" {
 		redirectHome(w, r)
+	} else if r.Method == "POST" {
+		renderTemplate(w, "help", nil)
 	} else {
 		redirectHome(w, r)
 	}

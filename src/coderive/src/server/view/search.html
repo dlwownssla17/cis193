@@ -42,18 +42,33 @@
 
         .query-text--search, .results--search {
             width: 94%;
-            min-height: 3em;
-            line-height: 3em;
             margin: 1em auto 1em auto;
-            padding-left: 2em;
+            padding: 1em;
             background: rgba(255, 255, 255, 1);
             border: 1px solid rgba(0, 0, 0, 0.5);
         }
 
         .query-text--search > span {
             vertical-align: middle;
-            line-height: normal;
             font-size: x-large;
+        }
+
+        .result--search {
+            margin: 1.5em auto 1.5em auto;
+            padding: 0.5em;
+            font-size: large;
+            border: 1px solid rgba(100, 100, 100, 0.5);
+        }
+
+        .result-code-snippet--search {
+            margin: 0.5em auto 0.5em auto;
+            padding: 0.5em;
+            font-size: small;
+            border: 1px solid rgba(0, 0, 0, 0.5);
+        }
+
+        .result-code-snippet--search > p {
+            margin: 0;
         }
 
     </style>
@@ -87,11 +102,75 @@
 
                 <div class="results-wrap--search">
                     <div class="query-text--search">
-                        <span>Results for&nbsp;&nbsp;<strong>{{.Query}}</strong></span>
+                        <span>Results for&nbsp;&nbsp;<strong>{{ .Query }}</strong></span>
+                        <p>{{ len .Matches }} results ({{ .SecondsElapsedString }} seconds)</p>
                     </div>
 
                     <div class="results--search">
-                        <span>Not Found</span> <!-- TODO -->
+
+                        {{ if not .Valid }}
+
+                        <h1>Invalid Query.</h1>
+                        <h3>If you're unsure of how to search, try Help.</h3>
+                        <div class="help-button--home">
+                            <form action="/help" method="post">
+                                <input type="submit" value="Help">
+                            </form>
+                        </div>
+
+                        {{ else if not .Matches }}
+
+                        <h1>Found no matches.</h1>
+
+                        {{ else }}
+
+                        {{ range .Matches }}
+
+                        <div class="result--search">
+                            <div class="result-info--search">
+                                <div class="result-info-username--search">
+                                    <strong>GitHub Username:</strong> {{ .FileInfo.Username }}
+                                </div>
+
+                                <div class="result-info-repositoryname--search">
+                                    <strong>Repository Name:</strong> {{ .FileInfo.RepositoryName }}
+                                </div>
+
+                                <div class="result-info-branchname--search">
+                                    <strong>Branch Name:</strong> {{ .FileInfo.BranchName }}
+                                </div>
+
+                                <div class="result-info-file--search">
+                                    <strong>File:</strong> {{ .FileInfo.FilePath }}
+                                </div>
+
+                                <div class="result-link--search">
+                                    <strong>Link:</strong>
+                                    <a id="result_link" class="result_link" href="{{ .FileInfo.Link }}">
+                                        {{ .FileInfo.Name }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <br>
+
+                            <div class="result-code--search">
+                                <div class="result-code-text--search">
+                                    <strong>Code:</strong>
+                                </div>
+                                <div class="result-code-snippet--search">
+                                    {{ range .FileInfo.LinesData }}
+
+                                        <p>{{ . }}</p>
+
+                                    {{ end }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{ end }}
+
+                        {{ end }}
                     </div>
                 </div>
             </div>

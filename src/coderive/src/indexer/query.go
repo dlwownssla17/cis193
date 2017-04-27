@@ -8,19 +8,19 @@ import (
 
 // FileInfo is a set of key information for each file.
 type FileInfo struct {
-	Username string
+	Username       string
 	RepositoryName string
-	BranchName string
-	FilePath string
-	Name string
-	Link string
-	NumLines int
-	Data string
+	BranchName     string
+	FilePath       string
+	Name           string
+	Link           string
+	NumLines       int
+	LinesData      []string
+	FormattedData  string
 }
 
 func (fileInfo *FileInfo) String() string {
-	lines := strings.Split(fileInfo.Data, "\n")
-	dataString := strings.Join(common.AddTabs(lines), "\n")
+	dataString := strings.Join(common.AddTabs(fileInfo.LinesData), "\n")
 	return fmt.Sprintf("FileInfo {\n" +
 		"\tUsername: %s\n" +
 		"\tRepositoryName: %s\n" +
@@ -29,12 +29,13 @@ func (fileInfo *FileInfo) String() string {
 		"\tName: %s\n" +
 		"\tLink: %s\n" +
 		"\tNumLines: %d\n" +
-		"\tData:\n" +
+		"\tRawData:\n" +
 		"\t\"\n" +
 		"%s\n" +
 		"\t\"\n" +
+		"\tData: %s\n" +
 		"}", fileInfo.Username, fileInfo.RepositoryName, fileInfo.BranchName, fileInfo.FilePath,
-		fileInfo.Name, fileInfo.Link, fileInfo.NumLines, dataString)
+		fileInfo.Name, fileInfo.Link, fileInfo.NumLines, dataString, fileInfo.FormattedData)
 }
 
 /* * */

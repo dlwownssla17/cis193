@@ -6,7 +6,12 @@ import (
 	"coderive/src/crawler"
 	"log"
 	"coderive/src/common"
+	"coderive/src/tokenizer"
+	"regexp"
+	"fmt"
 )
+
+/* * */
 
 // SaveQueryTextSearch stores into the query text search collection the given query.
 func SaveQueryTextSearch(q *QueryTextSearch) {
@@ -22,6 +27,64 @@ func SaveQueryTextSearch(q *QueryTextSearch) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func FindQueryTextSearches(qMap *tokenizer.QueryMap) []QueryTextSearch {
+	bsonMatch := make(bson.M)
+	for qType, qVal := range *qMap {
+		switch qType {
+		case "lines":
+			linesMap, ok := qVal.(map[string]int)
+			if !ok || len(linesMap) != 1 {
+				return nil
+			}
+
+			for linesOp, linesThreshold := range linesMap {
+				bsonMatch["fileinfo.numlines"] = bson.M{fmt.Sprintf("$%s", linesOp): linesThreshold}
+			}
+
+		case "text":
+			textMap, ok := qVal.(map[string]interface{})
+			if !ok {
+				return nil
+			}
+
+			qTextRegex, ok := textMap["val"].(string)
+			if !ok {
+				return nil
+			}
+
+			isRegex, ok := textMap["regex"].(bool)
+			if !ok {
+				return nil
+			}
+
+			if !isRegex {
+				qTextRegex = regexp.QuoteMeta(qTextRegex)
+			}
+
+			bsonMatch["fileinfo.formatteddata"] = bson.M{"$regex": qTextRegex, "$options": "si"}
+
+		default:
+			return nil
+		}
+	}
+
+	session, err := mgo.Dial("mongodb://localhost")
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	collQueriesTextSearch := common.GetCollection(session, "queries.textsearch")
+
+	var results []QueryTextSearch
+	err = collQueriesTextSearch.Find(bsonMatch).Sort("fileinfo.repositoryname fileinfo.filepath").All(&results)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return results
 }
 
 /* * */
@@ -64,6 +127,9 @@ func SaveQuerySemVarType(q *QuerySemVarType) {
 
 // GetAllRepositoriesToProcess gets all the repositories to process for indexing.
 func GetAllRepositoriesToProcess() []crawler.Repository {
+	bsonMatch := make(bson.M)
+	bsonMatch["processed"] = false
+
 	session, err := mgo.Dial("mongodb://localhost")
 	if err != nil {
 		panic(err)
@@ -73,7 +139,7 @@ func GetAllRepositoriesToProcess() []crawler.Repository {
 	collRepositories := common.GetCollection(session, "repositories")
 
 	var results []crawler.Repository
-	err = collRepositories.Find(bson.M{"processed": false}).All(&results)
+	err = collRepositories.Find(bsonMatch).All(&results)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -84,6 +150,10 @@ func GetAllRepositoriesToProcess() []crawler.Repository {
 // UpdateAllRepositoriesProcessed updates the processed field to true for all repositories whose processed field was
 // originally false.
 func UpdateAllRepositoriesProcessed() {
+	bsonMatch, bsonSet := make(bson.M), make(bson.M)
+	bsonMatch["processed"] = false
+	bsonSet["$set"] = bson.M{"processed": true}
+
 	session, err := mgo.Dial("mongodb://localhost")
 	if err != nil {
 		panic(err)
@@ -92,7 +162,7 @@ func UpdateAllRepositoriesProcessed() {
 
 	collRepositories := common.GetCollection(session, "repositories")
 
-	_, err = collRepositories.UpdateAll(bson.M{"processed": false}, bson.M{"$set": bson.M{"processed": true}})
+	_, err = collRepositories.UpdateAll(bsonMatch, bsonSet)
 	if err != nil {
 		log.Fatal(err)
 	}

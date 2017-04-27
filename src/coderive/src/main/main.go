@@ -1,21 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"sync"
+	"os"
 	"coderive/src/crawler"
-	"coderive/src/tokenizer"
+	"fmt"
+	"coderive/src/indexer"
+	"coderive/src/common"
+	"sync"
+	"coderive/src/server"
 )
-
-//import (
-//	"os"
-//	"coderive/src/crawler"
-//	"fmt"
-//	"coderive/src/indexer"
-//	"coderive/src/common"
-//	"sync"
-//	"coderive/src/server"
-//)
 
 func usage() {
 	fmt.Println("Usage:")
@@ -52,63 +45,58 @@ func crawlAll(args []string) {
 	wg.Wait()
 }
 
-//func main() {
-//	args := os.Args[1:]
-//
-//	if len(args) >= 3 && len(args) % 2 == 1 && args[0] == "crawl" {
-//		fmt.Println("Started crawling specified repositories")
-//
-//		crawlAll(args)
-//
-//		fmt.Println("Finished crawling specified repositories")
-//		return
-//	} else if len(args) == 2 && args[0] == "init" &&
-//		(args[1] == "repositories" || args[1] == "queries.textsearch") {
-//		fmt.Printf("Started initializing %s db\n", args[1])
-//
-//		common.DBCollectionInit(args[1])
-//
-//		fmt.Printf("Finished initializing %s db\n", args[1])
-//		return
-//	} else if len(args) == 1 {
-//		if args[0] == "index" {
-//			fmt.Println("Started indexing")
-//
-//			count := indexer.IndexAll()
-//
-//			fmt.Printf("Finished indexing: %d repositories processed\n", count)
-//			return
-//		} else if args[0] == "server" {
-//			fmt.Println("Started server")
-//
-//			server.RunServer()
-//
-//			fmt.Println("Finished server") // will not get here with Cmd+C
-//			return
-//		} else if args[0] == "init" {
-//			fmt.Println("Started initializing all dbs")
-//
-//			dbs := []string{"repositories", "queries.textsearch"}
-//			for _, db := range dbs {
-//				common.DBCollectionInit(db)
-//			}
-//
-//			fmt.Println("Finished initializing all dbs")
-//			return
-//		} else if args[0] == "drop" {
-//			fmt.Println("Started dropping entire database")
-//
-//			common.DBDrop()
-//
-//			fmt.Println("Finished dropping entire database")
-//			return
-//		}
-//	}
-//
-//	usage()
-//}
-
 func main() {
-	qMap := tokenizer.BuildQueryMap(" ;     text    [val[   \"\\[\\\"\\\" for .* in .* for .* in .*\\]\"   ], regex[false] ]  ; lines[ge[500]]")
-	fmt.Println(qMap)
+	args := os.Args[1:]
+
+	if len(args) >= 3 && len(args) % 2 == 1 && args[0] == "crawl" {
+		fmt.Println("Started crawling specified repositories")
+
+		crawlAll(args)
+
+		fmt.Println("Finished crawling specified repositories")
+		return
+	} else if len(args) == 2 && args[0] == "init" &&
+		(args[1] == "repositories" || args[1] == "queries.textsearch") {
+		fmt.Printf("Started initializing %s db\n", args[1])
+
+		common.DBCollectionInit(args[1])
+
+		fmt.Printf("Finished initializing %s db\n", args[1])
+		return
+	} else if len(args) == 1 {
+		if args[0] == "index" {
+			fmt.Println("Started indexing")
+
+			count := indexer.IndexAll()
+
+			fmt.Printf("Finished indexing: %d repositories processed\n", count)
+			return
+		} else if args[0] == "server" {
+			fmt.Println("Started server")
+
+			server.RunServer()
+
+			fmt.Println("Finished server") // will not get here with Cmd+C
+			return
+		} else if args[0] == "init" {
+			fmt.Println("Started initializing all dbs")
+
+			dbs := []string{"repositories", "queries.textsearch"}
+			for _, db := range dbs {
+				common.DBCollectionInit(db)
+			}
+
+			fmt.Println("Finished initializing all dbs")
+			return
+		} else if args[0] == "drop" {
+			fmt.Println("Started dropping entire database")
+
+			common.DBDrop()
+
+			fmt.Println("Finished dropping entire database")
+			return
+		}
+	}
+
+	usage()
 }

@@ -4,20 +4,22 @@ import (
 	"coderive/src/crawler"
 	"fmt"
 	"sync"
+	"strings"
 )
 
 func buildQueriesThroughDirectory(qs []*QueryTextSearch, dir *crawler.Directory,
 	username, repositoryName, branchName, currentFilePath string) []*QueryTextSearch {
 	for _, file := range dir.Files {
 		fileInfo := &FileInfo{
-			Username: username,
+			Username:       username,
 			RepositoryName: repositoryName,
-			BranchName: branchName,
-			FilePath: fmt.Sprintf("%s%s", currentFilePath, file.Name),
-			Name: file.Name,
-			Link: file.Link,
-			NumLines: file.NumLines,
-			Data: file.Data,
+			BranchName:     branchName,
+			FilePath:       fmt.Sprintf("%s%s", currentFilePath, file.Name),
+			Name:           file.Name,
+			Link:           file.Link,
+			NumLines:       file.NumLines,
+			LinesData:      strings.Split(file.Data, "\n"),
+			FormattedData:  strings.Join(strings.Fields(file.Data), " "),
 		}
 		q := &QueryTextSearch{
 			FileInfo: fileInfo,
