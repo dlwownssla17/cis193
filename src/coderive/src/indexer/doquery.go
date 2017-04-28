@@ -2,14 +2,14 @@ package indexer
 
 import (
 	"coderive/src/tokenizer"
-	"strings"
 	"html"
+	"strings"
 )
 
-// Matches represents the match of the file for some query.
+// Match represents the match of the file for some query.
 type Match struct {
 	MatchLines []int
-	FileInfo *FileInfo
+	FileInfo   *FileInfo
 }
 
 func convertForHTML(linesData []string) []string {
@@ -36,8 +36,8 @@ func findMatchesFromQMap(qMap *tokenizer.QueryMap) []*Match {
 		q.FileInfo.LinesData = convertForHTML(q.FileInfo.LinesData)
 
 		matches = append(matches, &Match{
-			MatchLines: []int{-1},
-			FileInfo: q.FileInfo,
+			MatchLines: []int{-1}, // TODO: implement this
+			FileInfo:   q.FileInfo,
 		})
 	}
 

@@ -1,14 +1,14 @@
 package indexer
 
 import (
+	"coderive/src/common"
+	"coderive/src/crawler"
+	"coderive/src/tokenizer"
+	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"coderive/src/crawler"
 	"log"
-	"coderive/src/common"
-	"coderive/src/tokenizer"
 	"regexp"
-	"fmt"
 )
 
 /* * */
@@ -29,6 +29,7 @@ func SaveQueryTextSearch(q *QueryTextSearch) {
 	}
 }
 
+// FindQueryTextSearches finds matching queries text search for the given query map.
 func FindQueryTextSearches(qMap *tokenizer.QueryMap) []QueryTextSearch {
 	bsonMatch := make(bson.M)
 	for qType, qVal := range *qMap {

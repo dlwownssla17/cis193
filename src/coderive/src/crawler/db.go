@@ -1,10 +1,10 @@
 package crawler
 
 import (
+	"coderive/src/common"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"log"
-	"coderive/src/common"
 )
 
 // ExistsRepository checks whether the specified repository already exists in the database.

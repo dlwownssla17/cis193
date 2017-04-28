@@ -1,13 +1,13 @@
 package main
 
 import (
-	"os"
-	"coderive/src/crawler"
-	"fmt"
-	"coderive/src/indexer"
 	"coderive/src/common"
-	"sync"
+	"coderive/src/crawler"
+	"coderive/src/indexer"
 	"coderive/src/server"
+	"fmt"
+	"os"
+	"sync"
 )
 
 func usage() {
@@ -48,7 +48,7 @@ func crawlAll(args []string) {
 func main() {
 	args := os.Args[1:]
 
-	if len(args) >= 3 && len(args) % 2 == 1 && args[0] == "crawl" {
+	if len(args) >= 3 && len(args)%2 == 1 && args[0] == "crawl" {
 		fmt.Println("Started crawling specified repositories")
 
 		crawlAll(args)

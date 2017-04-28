@@ -1,9 +1,8 @@
 package tokenizer
 
 import (
-	"strings"
 	"strconv"
-	"fmt"
+	"strings"
 )
 
 // QueryMap represents the user's query in a structure appropriate for database lookup.
@@ -17,16 +16,16 @@ var delims = map[byte]bool{
 }
 
 var linesKeys = map[string]bool{
-	"eq": false,
-	"lt": false,
-	"gt": false,
+	"eq":  false,
+	"lt":  false,
+	"gt":  false,
 	"lte": false,
 	"gte": false,
-	"ne": false,
+	"ne":  false,
 }
 
 var textKeys = map[string]bool{
-	"val": false,
+	"val":   false,
 	"regex": false,
 }
 
@@ -36,8 +35,9 @@ func tokenize(q string) []string {
 
 	q = strings.TrimSpace(q)
 	for q != "" {
-		if q[0] == '"' { // text value (including quotes)
-			for i < len(q) && !(q[i] == '"' && q[i-1] != '\\') {
+		if q[0] == '"' || q[0] == '\'' { // text value (including quotes)
+			for i < len(q) &&
+				!((q[0] == '"' && q[i] == '"') || (q[0] == '\'' && q[i] == '\'') && q[i-1] != '\\') {
 				i++
 			}
 			if i < len(q) {
@@ -60,7 +60,6 @@ func tokenize(q string) []string {
 	return tokens
 }
 
-// TODO: get rid of all the debugging print statements
 func buildQueryMapHelper(tokens []string) *QueryMap {
 	qMap := make(QueryMap)
 	i := 0
@@ -75,47 +74,39 @@ func buildQueryMapHelper(tokens []string) *QueryMap {
 			linesMap := make(map[string]int)
 
 			if i >= len(tokens) || tokens[i] != "[" {
-				fmt.Println(1)
 				return nil
 			}
 			i++
 
 			if i >= len(tokens) {
-				fmt.Println(2)
 				return nil
 			}
 			if _, ok := linesKeys[tokens[i]]; !ok {
-				fmt.Println(3)
 				return nil
 			}
 			linesOp := tokens[i]
 			i++
 
 			if i >= len(tokens) || tokens[i] != "[" {
-				fmt.Println(4)
 				return nil
 			}
 			i++
 
 			if i >= len(tokens) {
-				fmt.Println(5)
 				return nil
 			}
 			linesThreshold, err := strconv.Atoi(tokens[i])
 			if err != nil {
-				fmt.Println(6)
 				return nil
 			}
 			i++
 
 			if i >= len(tokens) || tokens[i] != "]" {
-				fmt.Println(7)
 				return nil
 			}
 			i++
 
 			if i >= len(tokens) || tokens[i] != "]" {
-				fmt.Println(8)
 				return nil
 			}
 			i++
@@ -126,7 +117,6 @@ func buildQueryMapHelper(tokens []string) *QueryMap {
 			textMap := make(map[string]interface{})
 
 			if i >= len(tokens) || tokens[i] != "[" {
-				fmt.Println(9)
 				return nil
 			}
 			i++
@@ -134,42 +124,37 @@ func buildQueryMapHelper(tokens []string) *QueryMap {
 			continueProcessing := true
 			for continueProcessing {
 				if i >= len(tokens) {
-					fmt.Println(10)
 					return nil
 				}
 				if _, ok := textKeys[tokens[i]]; !ok {
-					fmt.Println(11)
 					return nil
 				}
 				if _, ok := textMap[tokens[i]]; ok {
-					fmt.Println(12)
 					return nil
 				}
 				textKey := tokens[i]
 				i++
 
 				if i >= len(tokens) || tokens[i] != "[" {
-					fmt.Println(13)
 					return nil
 				}
 				i++
 
 				if i >= len(tokens) {
-					fmt.Println(14)
 					return nil
 				}
 				switch textKey {
 				case "val":
-					if len(tokens[i]) < 2 || tokens[i][0] != '"' || tokens[i][len(tokens[i])-1] != '"' {
-						fmt.Println(15)
+					if len(tokens[i]) < 2 ||
+						!(tokens[i][0] == '"' && tokens[i][len(tokens[i])-1] == '"') &&
+							!(tokens[i][0] == '\'' && tokens[i][len(tokens[i])-1] == '\'') {
 						return nil
 					}
 
-					textMap[textKey] = tokens[i][1:len(tokens[i])-1]
+					textMap[textKey] = tokens[i][1 : len(tokens[i])-1]
 				case "regex":
 					isRegex, err := strconv.ParseBool(tokens[i])
 					if err != nil {
-						fmt.Println(16)
 						return nil
 					}
 
@@ -178,13 +163,11 @@ func buildQueryMapHelper(tokens []string) *QueryMap {
 				i++
 
 				if i >= len(tokens) || tokens[i] != "]" {
-					fmt.Println(17)
 					return nil
 				}
 				i++
 
 				if i >= len(tokens) || !(tokens[i] == "]" || tokens[i] == ",") {
-					fmt.Println(18)
 					return nil
 				} else if tokens[i] == "]" {
 					continueProcessing = false
@@ -193,11 +176,9 @@ func buildQueryMapHelper(tokens []string) *QueryMap {
 			}
 
 			if _, ok := textMap["val"]; !ok {
-				fmt.Println(19)
 				return nil
 			}
 			if _, ok := textMap["regex"]; !ok {
-				fmt.Println(20)
 				textMap["regex"] = false
 			}
 			qMap[qType] = textMap

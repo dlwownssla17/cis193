@@ -20,7 +20,8 @@ func getBranchNames(username, repositoryName string) []string {
 	for i := 0; i < branchNamesDoc.Length(); i++ {
 		branchName, ok := branchNamesDoc.Eq(i).Attr("data-name")
 		if !ok {
-			log.Fatalf("GitHub User: %s\nRepository Name: %s\nBranch HTML element is formatted unexpectedly.\n", username, repositoryName)
+			log.Fatalf("GitHub User: %s\nRepository Name: %s\nBranch HTML element is formatted"+
+				"unexpectedly.\n", username, repositoryName)
 		}
 		branchNames = append(branchNames, branchName)
 	}
@@ -30,7 +31,8 @@ func getBranchNames(username, repositoryName string) []string {
 /* * */
 
 func getFileWithParams(username, repositoryName, branchName, filePath, filename string) *File {
-	doc, err := goquery.NewDocument(GitHubRawContentUrlifyWithParams(username, repositoryName, branchName, filePath))
+	doc, err := goquery.NewDocument(GitHubRawContentUrlifyWithParams(username, repositoryName,
+		branchName, filePath))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,10 +41,10 @@ func getFileWithParams(username, repositoryName, branchName, filePath, filename 
 	numLines := len(strings.Split(data, "\n"))
 
 	return &File{
-		Name: filename,
-		Link: GitHubUrlifyWithParams(username, repositoryName, branchName, filePath, true),
+		Name:     filename,
+		Link:     GitHubUrlifyWithParams(username, repositoryName, branchName, filePath, true),
 		NumLines: numLines,
-		Data: data,
+		Data:     data,
 	}
 }
 
@@ -71,8 +73,8 @@ func appendPath(originalPath, additionalPath string) string {
 		return originalPath
 	}
 
-	if originalPath[len(originalPath) - 1] == '/' {
-		originalPath = originalPath[:len(originalPath) - 1]
+	if originalPath[len(originalPath)-1] == '/' {
+		originalPath = originalPath[:len(originalPath)-1]
 	}
 	if additionalPath[0] == '/' {
 		additionalPath = additionalPath[1:]
@@ -94,7 +96,9 @@ func getDirectory(username, repositoryName, branchName, filePath, directoryName 
 		childName := childDoc.Text()
 		childLink, ok := childDoc.Attr("href")
 		if !ok {
-			log.Fatalf("GitHub User: %s\nRepository Name: %s\nBranch Name: %s\n File Path: %s\nHTML element for %s is missing a link unexpectedly.\n", username, repositoryName, branchName, filePath, childName)
+			log.Fatalf("GitHub User: %s\nRepository Name: %s\nBranch Name: %s\n File Path: %s\nHTML"+
+				"element for %s is missing a link unexpectedly.\n",
+				username, repositoryName, branchName, filePath, childName)
 		}
 
 		extendedPath := appendPath(filePath, childName)
@@ -140,9 +144,9 @@ func GetRepository(username, repositoryName string) *Repository {
 	}
 
 	return &Repository{
-		Username: username,
-		Name: repositoryName,
-		Branches: branches,
+		Username:  username,
+		Name:      repositoryName,
+		Branches:  branches,
 		Processed: false,
 	}
 }

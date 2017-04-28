@@ -1,30 +1,30 @@
 package crawler
 
 import (
+	"coderive/src/common"
 	"fmt"
 	"strings"
-	"coderive/src/common"
 )
 
 // File is a representation of a go source code file.
 type File struct {
-	Name string
-	Link string
+	Name     string
+	Link     string
 	NumLines int
-	Data string
+	Data     string
 }
 
 func (f *File) String() string {
 	lines := strings.Split(f.Data, "\n")
 	dataString := strings.Join(common.AddTabs(lines), "\n")
-	return fmt.Sprintf("File {\n" +
-		"\tName: %s\n" +
-		"\tLink: %s\n" +
-		"\tNumLines: %d\n" +
-		"\tData:\n" +
-		"\t\"\n" +
-		"%s\n" +
-		"\t\"\n" +
+	return fmt.Sprintf("File {\n"+
+		"\tName: %s\n"+
+		"\tLink: %s\n"+
+		"\tNumLines: %d\n"+
+		"\tData:\n"+
+		"\t\"\n"+
+		"%s\n"+
+		"\t\"\n"+
 		"}", f.Name, f.Link, f.NumLines, dataString)
 }
 
@@ -63,12 +63,12 @@ func (dir *Directory) String() string {
 	}
 	subdirectoriesString := strings.Join(subdirectoryStrings, ",\n")
 
-	return fmt.Sprintf("Directory {\n" +
-		"\tName: %s\n" +
-		"\tFiles:\n" +
-		"%s\n" +
-		"\tSubdirectories:\n" +
-		"%s\n" +
+	return fmt.Sprintf("Directory {\n"+
+		"\tName: %s\n"+
+		"\tFiles:\n"+
+		"%s\n"+
+		"\tSubdirectories:\n"+
+		"%s\n"+
 		"}", dir.Name, filesString, subdirectoriesString)
 }
 
@@ -90,10 +90,10 @@ func (br *Branch) String() string {
 	lines := strings.Split(rootString, "\n")
 	rootString = strings.Join(common.AddTabs(lines), "\n")
 
-	return fmt.Sprintf("Branch {\n" +
-		"\tName: %s\n" +
-		"\tRoot:\n" +
-		"%s\n" +
+	return fmt.Sprintf("Branch {\n"+
+		"\tName: %s\n"+
+		"\tRoot:\n"+
+		"%s\n"+
 		"}", br.Name, rootString)
 }
 
@@ -101,9 +101,9 @@ func (br *Branch) String() string {
 
 // Repository is a representation of a user's GitHub repository.
 type Repository struct {
-	Username string
-	Name string
-	Branches []*Branch
+	Username  string
+	Name      string
+	Branches  []*Branch
 	Processed bool
 }
 
@@ -125,11 +125,11 @@ func (repo *Repository) String() string {
 	}
 	branchesString := strings.Join(branchStrings, ",\n")
 
-	return fmt.Sprintf("Repository {\n" +
-		"\tUsername: %s\n" +
-		"\tName: %s\n" +
-		"\tBranches:\n" +
-		"%s\n" +
-		"\tProcessed: %v\n" +
+	return fmt.Sprintf("Repository {\n"+
+		"\tUsername: %s\n"+
+		"\tName: %s\n"+
+		"\tBranches:\n"+
+		"%s\n"+
+		"\tProcessed: %v\n"+
 		"}", repo.Username, repo.Name, branchesString, repo.Processed)
 }

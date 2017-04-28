@@ -32,7 +32,8 @@ func GitHubRawContentUrlify(partURL string) string {
 	return fmt.Sprintf("%s/%s", GitHubRawContentURL, partURL)
 }
 
-// GitHubRawContentUrlifyWithParams builds the GitHub Raw Content URL given the content-specific parameters. (assumes public repository)
+// GitHubRawContentUrlifyWithParams builds the GitHub Raw Content URL given the content-specific parameters.
+// (assumes public repository)
 func GitHubRawContentUrlifyWithParams(username, repositoryName, branchName, filePath string) string {
 	return GitHubRawContentUrlify(fmt.Sprintf("%s/%s/%s/%s", username, repositoryName, branchName, filePath))
 }

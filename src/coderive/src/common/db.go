@@ -2,8 +2,8 @@ package common
 
 import (
 	"gopkg.in/mgo.v2"
-	"log"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 )
 
 // Dummy struct

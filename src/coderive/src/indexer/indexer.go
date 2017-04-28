@@ -3,8 +3,8 @@ package indexer
 import (
 	"coderive/src/crawler"
 	"fmt"
-	"sync"
 	"strings"
+	"sync"
 )
 
 func buildQueriesThroughDirectory(qs []*QueryTextSearch, dir *crawler.Directory,
@@ -66,12 +66,10 @@ func IndexAll() int {
 		go func(repo crawler.Repository) {
 			defer wg.Done()
 
-
 		}(repo)
 
 		go func(repo crawler.Repository) {
 			defer wg.Done()
-
 
 		}(repo)
 	}

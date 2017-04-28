@@ -1,22 +1,22 @@
 package server
 
 import (
-	"net/http"
-	"html/template"
 	"coderive/src/indexer"
-	"runtime"
-	"path"
-	"time"
 	"fmt"
+	"html/template"
+	"net/http"
+	"path"
+	"runtime"
+	"time"
 )
 
 // Result represents the search result following a query.
 type Result struct {
-	Query string
-	Valid bool
-	Matches []*indexer.Match
+	Query     string
+	Valid     bool
+	Matches   []*indexer.Match
 	StartTime *time.Time
-	EndTime *time.Time
+	EndTime   *time.Time
 }
 
 // SecondsElapsed computes the seconds elapsed to search the results.
@@ -69,8 +69,8 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 
 	startTime := time.Now()
 	res := &Result{
-		Query: qText,
-		Valid: false,
+		Query:     qText,
+		Valid:     false,
 		StartTime: &startTime,
 	}
 
@@ -107,7 +107,7 @@ var sPath string
 var templates *template.Template
 
 func renderTemplate(w http.ResponseWriter, template string, res *Result) {
-	err := templates.ExecuteTemplate(w, template + ".html", res)
+	err := templates.ExecuteTemplate(w, template+".html", res)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -122,7 +122,8 @@ func start() {
 	}
 	sPath = path.Dir(filename)
 
-	templates = template.Must(template.ParseFiles(sPath+ "/view/home.html", sPath+ "/view/search.html", sPath+ "/view/help.html"))
+	templates = template.Must(template.ParseFiles(sPath+"/view/home.html", sPath+"/view/search.html",
+		sPath+"/view/help.html"))
 }
 
 // RunServer runs the server.
